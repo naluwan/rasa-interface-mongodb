@@ -321,61 +321,43 @@ router.post('/userStep/fragments', (req, res) => {
 router.get('/filter', (req, res) => {
   const {storyFilter} = req.query
   const jh_simple_story = true
-  const cpnyId = res.locals.user.CPY_ID
+  const userId = req.user._id
 
-  // 使用模組從資料庫抓取fragments data
-  // 獲取正確故事
-  getSqlTrainingData('BF_JH_DATA_TEST', 'fragments-test', 'fragments', cpnyId)
+  // 抓取指定使用者的訓練檔
+  TrainingData.find({userId})
   .then(data => {
-    const stories = data.stories
-    const storyData = stories.filter(item => item.story == storyFilter)
-    return {storyData, stories}
-  })
-  .then(dataObj => {
-    // 使用模組從資料庫抓取nlu訓練資料
-    // 獲取故事中的關鍵字
-    getSqlTrainingData('BF_JH_DATA_TEST', 'nlu-json-test', 'nlu', cpnyId)
-    .then(data => {
-      const allNlu = data.rasa_nlu_data.common_examples
-      dataObj.storyData = dataObj.storyData.map(item => {
-        item.steps.map(step => {
-          if(!step.entities) return step
-          if(!step.entities.length) return step
-          allNlu.map(nlu => {
-            if(nlu.text === step.user && nlu.intent === step.intent){
-              step.entities = nlu.entities
-              step.entities.map(entityItem => {
-                entityItem.text = step.user.slice(entityItem.start, entityItem.end)
-              })
-            }
-          })
-        })
-        return item
+    // 獲取各訓練檔
+    const fragments = data.filter(item => item.data_name === 'fragments-test')
+    const domain = data.filter(item => item.data_name === 'domain-test')
+    const nlu = data.filter(item => item.data_name === 'nlu-json-test')
+    const storyData = fragments[0].data_content.stories
+    const responses = domain[0].data_content.responses
+    const allNlu = nlu[0].data_content.rasa_nlu_data.common_examples
+    storyData.map(item => {
+      item.steps.map(step => {
+        // 獲取故事中的關鍵字
+        if(step.entities){
+          if(step.entities.length){
+            allNlu.map(nlu => {
+              if(nlu.text === step.user && nlu.intent === step.intent){
+                step.entities = nlu.entities
+                step.entities.map(entityItem => {
+                  entityItem.text = step.user.slice(entityItem.start, entityItem.end)
+                })
+              }
+            })
+          }
+        }
+        // 獲取故事中機器人的回覆
+        if(step.action){
+          step.response = responses[step.action].map(res => res.text)[0].trim()
+          step.response = JSON.parse(JSON.stringify(step.response).replace(/  \\n/g, '\\r'))
+        }
+        return step
       })
-      return dataObj
     })
-    .then(dataObj => {
-      // 使用模組從資料庫抓取domain訓練資料
-      // 獲取故事中機器人的回覆
-      getSqlTrainingData('BF_JH_DATA_TEST', 'domain-test', 'domain', cpnyId)
-      .then(data => {
-        dataObj.storyData = dataObj.storyData.map(item => {
-          item.steps.map(step => {
-            if(!step.action) return step
-            step.response = data.responses[step.action].map(res => res.text)[0].trim()
-            step.response = JSON.parse(JSON.stringify(step.response).replace(/  \\n/g, '\\r'))
-          })
-          return item
-        })
-        return dataObj
-      })
-      .then(dataObj => {
-        // console.log(dataObj.storyData)
-        res.render('index', {stories: dataObj.stories, jh_simple_story, storyData: dataObj.storyData})
-      })
-      .catch(err => console.log(err))
-    })
-    .catch(err => console.log(err))
+
+    res.render('index', {stories: fragments[0].data_content.stories, storyData, jh_simple_story})
   })
   .catch(err => console.log(err))
 })
@@ -389,16 +371,14 @@ router.get('/new', (req, res) => {
 // 顯示故事流程首頁
 router.get('/', (req, res) => {
   const jh_simple_story = true
-  // const cpnyId = res.locals.user.CPY_ID
-  // // 使用模組從資料庫抓取fragments data
-  // getSqlTrainingData('BF_JH_DATA_TEST', 'fragments-test', 'fragments', cpnyId)
-  // .then(data => {
-  //   const stories = data.stories
-  //   res.render('index', {stories, jh_simple_story})
-  // })
-  // .catch(err => console.log(err))
+  const userId = req.user._id
 
-
+  TrainingData.findOne({data_name: 'fragments-test', userId})
+  .then(data => {
+    const stories = data.data_content.stories
+    res.render('index', {stories, jh_simple_story})
+  })
+  .catch(err => console.log(err))
 })
 
 module.exports = router
