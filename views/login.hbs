@@ -1,0 +1,22 @@
+<div data-func="login">
+  <div class="signin">
+    <!--login.hbs-->
+    <h1>Chat Bot</h1>
+    {{> message}}
+    <form action="/users/login" Method="post">
+      
+      <input type="email" id="email" name="email" class="form-control" placeholder="請輸入E-mail" required>
+      <input type="password" id="password" name="password" class="form-control" placeholder="請輸入密碼" required>
+      
+      <div>
+        <button type="button" class="btn btn-primary" id="forget">忘記密碼</button>
+        <button type="submit" class="btn btn-info" id="submit">登入</button>
+      </div>
+      <div class="account">
+        還沒有帳號?
+        <!--<a href="javascript:;" onclick="Method.common.page('/users/register')">註冊</a>-->
+        <a href="/users/register">註冊</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,227 @@
+<!--index.hbs-->
+<div data-func="index">
+  {{#if isAdmin}}
+    {{#is whichRole 'hire'}}
+    <div>
+      <!-- admin jh 按鈕 -->
+      <span class="menu">
+        <form action="/roleFilter?_method=PUT" method="POST">
+
+          <select class="form-control" name="roleFilter" id="roleFilter" onchange="submit()">
+            <option value="hire" {{#is whichRole 'hire'}} selected {{/is}}>徵厲Hire</option>
+            <option value="hr" {{#is whichRole 'hr'}} selected {{/is}}>棉花糖客服</option>
+          </select>
+          
+        </form>
+        
+        <button type="button" id="train" class="btn btn-dark jh-train-btn" disabled>執行訓練</button>
+        <div>
+          <div>
+            <label>帳號資料:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/admin_company')" value="設定">
+          </div>
+          
+          <div>
+            <label>資訊類別:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/admin_companyInfo')" value="設定">
+          </div>
+
+          <div>
+            <label>職缺類別:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/admin_positionInfo')" value="設定">
+          </div>
+
+          <!--
+          <div>
+            <label>公司產業類別:</label>
+            <a href="/adminIndustryInfo" class="btn btn-success" role="button">設定</a>
+          </div>
+          --> 
+          <div>
+            <label>假別類別:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/admin_leaveInfo')" value="設定">
+          </div>
+
+          <div>
+            <label>補助類別:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/admin_subsidyInfo')" value="設定">
+          </div>
+
+          <div>
+            <label>回覆查詢:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/admin_search')" value="設定">
+          </div>
+
+        </div>
+      </span>
+
+      <!-- admin jh 右側顯示頁面 -->
+      <span class="setting">
+        {{> admin_register}}
+        {{> admin_company}}
+        {{> admin_edit_company}}
+        {{> admin_edit_pwd}}
+        {{> admin_search}}
+        {{> admin_new_search}}
+        {{> admin_edit_search}}
+        {{> admin_edit_category}}
+        {{> admin_new_category}}
+        {{> admin_category}}
+      </span>
+
+    </div>
+    {{/is}}
+
+    {{#is whichRole 'hr'}}
+    <div>
+      {{> message}}
+    </div>
+
+    <div>
+      <!-- admin hr 按鈕 -->
+      <span class="menu">
+
+        <form action="/roleFilter?_method=PUT" method="POST">
+
+          <select class="form-control" name="roleFilter" id="roleFilter" onchange="submit()">
+            <option value="hire" {{#is whichRole 'hire'}} selected {{/is}}>徵厲Hire</option>
+            <option value="hr" {{#is whichRole 'hr'}} selected {{/is}}>棉花糖客服</option>
+          </select>
+
+        </form>
+
+        <button id="train" class="btn btn-dark cs-train-btn" type="button" disabled>執行訓練</button>
+
+        <div>
+
+          <div>
+            <label>Admin - 功能分類:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/bf_cs/function')" value="設定">
+          </div>
+          
+          <div>
+            <label>Admin - 問答分類:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/bf_cs/question')" value="設定">
+          </div>
+
+        </div>
+      </span>
+
+      <!-- admin hr 右側顯示畫面 -->
+      <span class="setting"></span>
+
+    </div>
+
+    {{/is}}
+  {{else if isHr}}
+  <div>
+    {{> message}}
+  </div>
+
+  <div>
+    <!-- user hr 按鈕 -->
+    <span class="menu">
+        <button id="train" class="btn btn-dark cs-train-btn" type="button" disabled>執行訓練</button>
+          <div>
+
+            <div>
+              <label>主要分類:</label>
+              <input type="button" class="btn btn-success" onclick="Method.common.page('/cs_category')" value="設定">
+            </div> 
+
+            <div>
+              <label>功能分類:</label>
+              <input type="button" class="btn btn-success" onclick="Method.common.page('/cs_function')" value="設定">
+            </div> 
+
+            <div>
+              <label>問答分類:</label>
+              <input type="button" class="btn btn-success" onclick="Method.common.page('/cs_question')" value="設定">
+            </div>
+
+          </div>
+    </span>
+
+    <!-- user hr 右側畫面 -->
+    <span class="setting">
+      {{> jh_index}}
+      {{> cs_category}}
+      {{> cs_new_category}}
+      {{> cs_function}}
+      {{> cs_new_function}}
+      {{> cs_question}}
+      {{> cs_new_question}}
+    </span>
+  </div>
+
+  {{else}}
+  <div>
+    <!-- user jh 按鈕 -->
+    <span class="menu">
+      <div id="messageBlock"></div>
+      <button id="train" class="btn btn-dark jh-train-btn" type="button" disabled>執行訓練</button>
+        <div>
+
+<!--
+          <div>
+            <label>公司資訊:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/jh_cpnyInfo')" value="設定">
+          </div>
+
+          <div>
+            <label>職缺設定:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/jh_position')" value="設定">
+          </div>
+
+          <div>
+            <label>假別設定:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/jh_leave')" value="設定">
+          </div>
+
+          <div>
+            <label>補助津貼:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/jh_subsidy')" value="設定">
+          </div>
+-->
+          <div>
+            <label>對話紀錄:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/jh_conversations')" value="設定">
+          </div>
+
+          <div>
+            <label>故事流程:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/jh_story')" value="設定">
+          </div>
+
+          <div>
+            <label>simple故事:</label>
+            <input type="button" class="btn btn-success" onclick="Method.common.page('/jh_simple_story')" value="設定">
+          </div>
+
+          {{!-- <div>
+            <label>通知問候:</label>
+              <a href="/greet" class="btn btn-primary" role="button">設定</a>
+          </div>
+          <div>
+            <label>預設回覆:</label>
+              <a href="/defaultRes" class="btn btn-primary" role="button">設定</a>
+          </div> --}}
+        </div>
+
+    </span>
+
+    <!-- user jh 右側畫面 -->
+    <span class="setting">
+      {{> jh_index}}
+      {{> jh_des}}
+      {{> jh_edit_des}}
+      {{> jh_new_des}}
+      {{> jh_new_synonym}}
+      {{> jh_conversations}}
+      {{> jh_story}}
+      {{> jh_new_story}}
+      {{> jh_simple_story}}
+      {{> jh_new_simple_story}}
+    </span>
+  </div>
+  {{/if}}

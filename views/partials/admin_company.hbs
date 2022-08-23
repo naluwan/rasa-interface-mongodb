@@ -1,0 +1,47 @@
+{{#if admin_company}}
+<!--admin_company-->
+<div class="admin_company">
+  <h1>帳號資訊</h1>
+  <div>
+    {{> message}}
+    <div id="data-panel">
+      {{#each adminCompanyInfo}}
+      <div>
+        <span>
+          <h2 title="{{this.CPY_NAME}}">{{this.CPY_NAME}}</h2>
+          <div>
+            <span>公司代碼(公司統編)：</span>
+            <span title="{{this.CPY_ID}}">{{ this.CPY_ID}}</span>
+          </div>
+          <div>
+            <span>EMAIL(登入帳號)：</span>
+            <span title="{{this.EMAIL}}">{{ this.EMAIL }}</span>
+          </div>
+          <!--<div>
+            <span>產業類別：</span>
+            <span title="{{this.INDUSTRY_NAME}}">{{ this.INDUSTRY_NAME }}</span>
+          </div>-->
+          <div>
+            <span>客服使用者：</span>
+            <span>{{#if this.ISHR}}是{{else}}否{{/if}}</span>
+          </div>
+          <div>
+            <span>管理員權限：</span>
+            <span>{{#if this.ISADMIN}}管理者{{else}}一般使用者{{/if}}</span>
+          </div>
+        </span>
+        <span>
+          <input type="button" id="edit" class="btn btn-primary" onclick="Method.common.page('/admin_company/{{ this.CPY_ID }}/edit')" value="編輯">
+          <input type="button" id="repwd" class="btn btn-info" data-title="{{this.CPY_NAME}}" data-info="/admin_company/{{ this.CPY_ID }}/edit/password'" value="修改密碼">
+          <input type="button" id="del" class="btn btn-danger" data-title="{{this.CPY_NAME}}" data-infoId="{{this.CPY_ID}}" value="刪除">
+        </span>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  <div class="footButton">
+    <input type="button" class="btn btn-warning" onclick="Method.common.page('/admin_company/new')" value="新增使用者">
+  </div>
+</div>
+
+{{/if}}
